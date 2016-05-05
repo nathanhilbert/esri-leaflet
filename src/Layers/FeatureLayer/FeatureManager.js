@@ -185,6 +185,12 @@ export var FeatureManager = VirtualGrid.extend({
    */
 
   setWhere: function (where, callback, context) {
+    if (this.settingwhere){
+      console.log("Already setting the where.  There might be collision");
+
+      this.currentrequest.abort();
+    }
+    this.settingwhere = true
     this.options.where = (where && where.length) ? where : '1=1';
 
     var oldSnapshot = [];
@@ -202,17 +208,21 @@ export var FeatureManager = VirtualGrid.extend({
         }
       }
 
+      // console.log(pendingRequests);
+
       pendingRequests--;
 
       if (pendingRequests <= 0) {
         this._currentSnapshot = newSnapshot;
         // schedule adding features for the next animation frame
         L.Util.requestAnimFrame(L.Util.bind(function () {
+          console.log("-----------");
           this.removeLayers(oldSnapshot);
           this.addLayers(newSnapshot);
           if (callback) {
             callback.call(context, requestError);
           }
+          this.settingwhere = false;
         }, this));
       }
     }, this);
@@ -225,7 +235,7 @@ export var FeatureManager = VirtualGrid.extend({
       pendingRequests++;
       var coords = this._keyToCellCoords(key);
       var bounds = this._cellCoordsToBounds(coords);
-      this._requestFeatures(bounds, key, requestCallback);
+      this.currentrequest = this._requestFeatures(bounds, key, requestCallback);
     }
 
     return this;

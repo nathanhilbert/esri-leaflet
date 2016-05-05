@@ -128,9 +128,10 @@ export var FeatureLayer = FeatureManager.extend({
         this._map.addLayer(layer);
       }
     }
+    // console.log("done adding layers");
   },
 
-  removeLayers: function (ids, permanent) {
+  removeLayers: function (ids, permanent, addids) {
     for (var i = ids.length - 1; i >= 0; i--) {
       var id = ids[i];
       var layer = this._layers[id];
@@ -144,7 +145,11 @@ export var FeatureLayer = FeatureManager.extend({
       if (layer && permanent) {
         delete this._layers[id];
       }
+      if (addids){
+        this.addLayers(addids);
+      }
     }
+    // console.log("done removing layers");
   },
 
   cellEnter: function (bounds, coords) {

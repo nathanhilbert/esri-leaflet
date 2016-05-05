@@ -1,0 +1,61 @@
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>Simple FeatureLayer</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <!-- Load Leaflet from CDN-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/leaflet/1.0.0-rc.1/leaflet.css" />
+
+  <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/leaflet/1.0.0-rc.1/leaflet-src.js"></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="dist/esri-leaflet.js"></script>
+
+  <style>
+    body { margin:0; padding:0; }
+    #map { position: absolute; top:50px; bottom:0; right:0; left:0; }
+    #topbar { height:50px;}
+    .layerchanger{ display:inline; background-color:yellow; padding:10px; margin:10px; cursor:pointer; }
+  </style>
+</head>
+<body>
+<div id='topbar'><span class='layerchanger'>Change Layer</span></div>
+<div id="map"></div>
+
+<script>
+$( document ).ready(function() {
+
+  var getRandomInt = function (min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+
+  var map = L.map('map').setView([30.25, -97.733], 10);
+
+  L.esri.basemapLayer('Streets').addTo(map);
+  var featurelayer = L.esri.featureLayer({
+    url: 'http://services6.arcgis.com/RXwE6Rr6OxsElADd/arcgis/rest/services/ADA_Polygons/FeatureServer/0',
+    where: "1=0",
+  }).addTo(map);
+
+  var getrandomlayer = function(ev){
+    featurelayer.setWhere("Name='poly00" + getRandomInt(1, 9) + "'");
+  }
+
+  $(".layerchanger").click(getrandomlayer);
+
+  setTimeout(function(){
+    $.each([1,2,3,4,5,6], function(v){
+      setTimeout(getrandomlayer, 250 * v);
+    });
+  }, 1000);
+
+
+});
+</script>
+
+</body>
+</html>
